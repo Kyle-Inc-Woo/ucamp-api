@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: ucamp-api
+
+  datasource :
+    url: jdbc:postgresql://localhost:5432/ucamp
+    username: postgres
+    password: dn0513
+
+    jpa:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
