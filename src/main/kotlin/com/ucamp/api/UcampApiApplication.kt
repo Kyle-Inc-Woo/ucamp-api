@@ -1,4 +1,4 @@
-package com.ucamp.ucamp_api
+package com.ucamp.api
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

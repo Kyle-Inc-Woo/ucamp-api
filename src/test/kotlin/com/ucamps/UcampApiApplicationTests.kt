@@ -1,4 +1,4 @@
-package com.ucamp.ucamp_api
+package com.ucamps
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
