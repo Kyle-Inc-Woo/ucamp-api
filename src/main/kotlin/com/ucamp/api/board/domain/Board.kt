@@ -5,20 +5,25 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "boards")
-class Board (
+class Board(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id : Long ? =null,
+    var id: Long? = null,
 
     @Column(nullable = false, unique = true)
-    var name : String,
+    var name: String,
 
     @Column(length = 255)
-    var description : String,
+    var description: String,
 
     @Column(name = "created_at", nullable = false)
-    var createdAt : LocalDateTime = LocalDateTime.now()
+    var createdAt: LocalDateTime = LocalDateTime.now()
 
-)
+) {
+    fun update(name: String, description: String) {
+        this.name = name
+        this.description = description
+    }
+}
 
