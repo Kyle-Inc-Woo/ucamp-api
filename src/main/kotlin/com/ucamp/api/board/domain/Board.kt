@@ -25,5 +25,14 @@ class Board(
         this.name = name
         this.description = description
     }
+
+    fun patch(name: String?, description: String?) {
+        if (name != null) {
+            this.name = name
+        }
+        if (description != null) {
+            this.description = description
+        }
+    }
 }
 

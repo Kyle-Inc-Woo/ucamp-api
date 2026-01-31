@@ -3,9 +3,11 @@ package com.ucamp.api.board
 
 import com.ucamp.api.board.domain.Board
 import com.ucamp.api.board.dto.BoardCreateRequest
+import com.ucamp.api.board.dto.BoardPatchRequest
 import com.ucamp.api.board.dto.BoardResponse
 import com.ucamp.api.board.dto.BoardUpdatedRequest
 import com.ucamp.api.board.exception.BoardNotFoundException
+import com.ucamp.api.common.exception.InvalidBoardPatchRequestException
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -51,6 +53,35 @@ class BoardService(
 
         board.update(request.name, request.description)
 
+        return board.toResponse()
+    }
+
+    @Transactional
+    fun deleteBoard(id: Long) {
+        val board = boardRepository.findById(id)
+            .orElseThrow { BoardNotFoundException(id) }
+
+        boardRepository.delete(board)
+    }
+
+    @Transactional
+    fun patchBoard(id: Long, request: BoardPatchRequest): BoardResponse {
+        val board = boardRepository.findById(id)
+            .orElseThrow { BoardNotFoundException(id) }
+
+        if (request.name == null && request.description == null) {
+            throw InvalidBoardPatchRequestException("At least one field (name/description) must be provided")
+        }
+
+        if (request.name != null && request.name.isBlank()) {
+            throw InvalidBoardPatchRequestException("name must not be blank")
+        }
+
+        if (request.description != null && request.description.isBlank()) {
+            throw InvalidBoardPatchRequestException("description cannot be blank")
+        }
+
+        board.patch(request.name, request.description)
         return board.toResponse()
     }
 

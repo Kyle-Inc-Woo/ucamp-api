@@ -82,4 +82,32 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body)
     }
 
+    @ExceptionHandler(NotFoundException::class)
+    fun handleNotFound(
+        ex: NotFoundException,
+        request: HttpServletRequest
+    ): ResponseEntity<ApiErrorResponse> {
+        val body = ApiErrorResponse(
+            status = HttpStatus.NOT_FOUND.value(),
+            error = HttpStatus.NOT_FOUND.reasonPhrase,
+            message = ex.message,
+            path = request.requestURI
+        )
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body)
+    }
+
+    @ExceptionHandler(BadRequestException::class)
+    fun handleBadRequestException(
+        ex: BadRequestException,
+        request: HttpServletRequest
+    ): ResponseEntity<ApiErrorResponse> {
+        val body = ApiErrorResponse(
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = HttpStatus.BAD_REQUEST.reasonPhrase,
+            message = ex.message ?: "Bad Request",
+            path = request.requestURI
+        )
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body)
+    }
+
 }
