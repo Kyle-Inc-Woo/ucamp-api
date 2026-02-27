@@ -74,7 +74,7 @@ class GlobalExceptionHandler {
         request: HttpServletRequest
     ): ResponseEntity<ApiErrorResponse> {
         val body = ApiErrorResponse(
-            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            status = 500,
             error = HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase,
             message = "Unexpected error",
             path = request.requestURI
@@ -108,6 +108,21 @@ class GlobalExceptionHandler {
             path = request.requestURI
         )
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body)
+    }
+
+    @ExceptionHandler(UnauthorizedException::class)
+    fun handleUnauthorized(ex: UnauthorizedException, request: HttpServletRequest): ResponseEntity<ApiErrorResponse> {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(
+                ApiErrorResponse(
+                    status = 401,
+                    error = HttpStatus.UNAUTHORIZED.reasonPhrase,
+                    message = ex.message ?: "Unauthorized",
+                    path = request.requestURI,
+                    errorCode = ex.errorCode
+                )
+            )
     }
 
 }
