@@ -10,12 +10,15 @@ Campus community platform backend API (Kotlin + Spring Boot)
 - JWT
 
 ## Project Structure
+
+```
 src/main/kotlin/com/ucamp/api
 ├─ board
 ├─ user
 ├─ auth
 ├─ security
 └─ common
+```
 
 
 ## Key Features
