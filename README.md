@@ -1,6 +1,5 @@
 # UCAMP API
-
-Campus community platform for CA backend API
+Campus community platform backend API (Kotlin + Spring Boot)
 
 ## Tech Stack
 - Kotlin
@@ -8,26 +7,43 @@ Campus community platform for CA backend API
 - Spring Data JPA
 - PostgreSQL
 - Spring Security
-- JMT
+- JWT
 
-## Porject Structure
+## Project Structure
 src/main/kotlin/com/ucamp/api
--board
--user
--auth
--common
+├─ board
+├─ user
+├─ auth
+├─ security
+└─ common
 
-##Board API
 
-### PUT /boards/{id}
-### PATCH /boards/{id}
+## Key Features
+- Board CRUD (GET/POST/PUT/PATCH/DELETE)
+- Signup / Login
+- Password hashing (PasswordEncoder)
+- JWT access token issuance
+- Spring Security authorization rules
+  - Public: GET /boards, GET /boards/**
+  - Protected: POST/PUT/PATCH/DELETE /boards/**
 
-##Error Response Format
+## API Quick Test (Postman/curl)
+### 1) Signup
+POST `/auth/signup`
 
-- json
-  {
-  "status" : 400,
-  "error" : "Bad request",
-  "message" : "name must not be blank",
-  "path" : "/boards/1"
-  }
+### 2) Login → Get accessToken
+POST `/auth/login`
+
+### 3) Create board with token
+POST `/boards`
+Header:
+`Authorization: Bearer <accessToken>`
+
+## Error Response Format
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "name must not be blank",
+  "path": "/boards/1"
+}
