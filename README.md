@@ -1,6 +1,15 @@
 # UCAMP API
 Campus community platform backend API (Kotlin + Spring Boot)
 
+Spring Boot Kotlin Backend API Server
+
+- 회원가입 / 로그인 JWT 인증
+- Board CRUD API
+- PUT / PATCH 분리 구현
+- Global Exception Handling
+- PostgreSQL Database
+- Spring Security Authorization
+
 ## Tech Stack
 - Kotlin
 - Spring Boot 3
