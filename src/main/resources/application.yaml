@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/ucamp
-    username: postgres
-    password: dn0513
+    username: inchangwoo
+    password:
 
   jpa:
     hibernate:
