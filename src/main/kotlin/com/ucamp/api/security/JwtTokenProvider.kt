@@ -1,6 +1,7 @@
 package com.ucamp.api.security
 
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -21,11 +22,23 @@ class JwtTokenProvider(
 
     fun createAccessToken(userId: Long, email: String): String {
         val now = Date()
-        val expiry = Date(now.time + expMinutes * 60 * 1000)
+        val expiry = Date(now.time + 1000L * 60 * 15) // 15 minutes..
 
         return Jwts.builder()
             .subject(userId.toString())
             .claim("email", email)
+            .issuedAt(now)
+            .expiration(expiry)
+            .signWith(key)
+            .compact()
+    }
+
+    fun createRefreshToken(userId: Long): String {
+        val now = Date()
+        val expiry = Date(now.time + 1000L * 60 * 60 * 24 * 7) // 7 days..
+
+        return Jwts.builder()
+            .subject(userId.toString())
             .issuedAt(now)
             .expiration(expiry)
             .signWith(key)
