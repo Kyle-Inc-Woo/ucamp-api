@@ -19,7 +19,10 @@ class User(
     var passwordHash: String,
 
     @Column(nullable = false, length = 30)
-    var nickname: String
+    var nickname: String,
+
+    @Column(name = "refresh_token", length = 1000)
+    var refreshToken: String? = null
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

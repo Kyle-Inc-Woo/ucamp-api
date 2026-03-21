@@ -1,6 +1,7 @@
 package com.ucamp.api.auth
 
 import com.ucamp.api.user.UserService
+import com.ucamp.api.user.dto.RefreshTokenRequest
 import com.ucamp.api.user.dto.TokenResponse
 import com.ucamp.api.user.dto.UserLoginRequest
 import com.ucamp.api.user.dto.UserSignupRequest
@@ -23,5 +24,10 @@ class AuthController(
     @PostMapping("/login")
     fun login(@Valid @RequestBody request: UserLoginRequest): TokenResponse {
         return userService.login(request)
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(@RequestBody request : RefreshTokenRequest): TokenResponse {
+        return userService.refresh(request)
     }
 }

@@ -2,12 +2,14 @@ package com.ucamp.api.user
 
 import com.ucamp.api.security.JwtTokenProvider
 import com.ucamp.api.user.domain.User
+import com.ucamp.api.user.dto.RefreshTokenRequest
 import com.ucamp.api.user.dto.TokenResponse
 import com.ucamp.api.user.dto.UserLoginRequest
 import com.ucamp.api.user.dto.UserSignupRequest
 import com.ucamp.api.user.dto.UserSignupResponse
 import com.ucamp.api.user.exception.EmailAlreadyExistsException
 import com.ucamp.api.user.exception.InvalidCredentialsException
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -40,7 +42,7 @@ class UserService(
         )
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     fun login(request: UserLoginRequest): TokenResponse {
         val user = userRepository.findByEmail(request.email) ?: throw InvalidCredentialsException()
 
@@ -48,11 +50,45 @@ class UserService(
         if (!ok)
             throw InvalidCredentialsException()
 
-        val token = jwtTokenProvider.createAccessToken(
+        val accessToken = jwtTokenProvider.createAccessToken(
             userId = user.id,
             email = user.email
         )
-        return TokenResponse(accessToken = token)
+
+        val refreshToken = jwtTokenProvider.createRefreshToken(user.id)
+
+        user.refreshToken = refreshToken
+        userRepository.save(user)
+
+        return TokenResponse(
+            accessToken = accessToken,
+            refreshToken = refreshToken
+        )
+    }
+
+    @Transactional(readOnly = true)
+    fun refresh(request: RefreshTokenRequest): TokenResponse {
+        if(!jwtTokenProvider.validate(request.refreshToken)) {
+            throw InvalidCredentialsException()
+        }
+
+        val userId = jwtTokenProvider.getUserId(request.refreshToken)
+
+        val user = userRepository.findByIdOrNull(userId) ?: throw InvalidCredentialsException()
+
+        if (user.refreshToken != request.refreshToken) {
+            throw InvalidCredentialsException()
+        }
+
+        val newAcessToken = jwtTokenProvider.createAccessToken(
+            userId = userId,
+            email = user.email
+        )
+
+        return TokenResponse(
+            accessToken = newAcessToken,
+            refreshToken = user.refreshToken!!
+        )
     }
 
 }
