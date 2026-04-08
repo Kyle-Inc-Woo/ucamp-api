@@ -9,5 +9,6 @@ data class BoardCreateRequest(
     val name: String,
 
     @field:NotBlank(message = "Description is required")
-    val description: String = ""
+    @field:Size(max = 255, message = "Description must be at most 255 characters")
+    val description: String
 )

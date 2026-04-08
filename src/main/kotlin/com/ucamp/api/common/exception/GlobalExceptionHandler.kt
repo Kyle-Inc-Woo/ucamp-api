@@ -68,20 +68,6 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body)
     }
 
-    @ExceptionHandler(Exception::class)
-    fun handleUnexpected(
-        ex: Exception,
-        request: HttpServletRequest
-    ): ResponseEntity<ApiErrorResponse> {
-        val body = ApiErrorResponse(
-            status = 500,
-            error = HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase,
-            message = "Unexpected error",
-            path = request.requestURI
-        )
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body)
-    }
-
     @ExceptionHandler(NotFoundException::class)
     fun handleNotFound(
         ex: NotFoundException,
@@ -111,18 +97,31 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnauthorizedException::class)
-    fun handleUnauthorized(ex: UnauthorizedException, request: HttpServletRequest): ResponseEntity<ApiErrorResponse> {
-        return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(
-                ApiErrorResponse(
-                    status = 401,
-                    error = HttpStatus.UNAUTHORIZED.reasonPhrase,
-                    message = ex.message ?: "Unauthorized",
-                    path = request.requestURI,
-                    errorCode = ex.errorCode
-                )
-            )
+    fun handleUnauthorized(
+        ex: UnauthorizedException,
+        request: HttpServletRequest
+    ): ResponseEntity<ApiErrorResponse> {
+        val body = ApiErrorResponse(
+            status = HttpStatus.FORBIDDEN.value(),
+            error = HttpStatus.FORBIDDEN.reasonPhrase,
+            message = ex.message ?: "Forbidden",
+            path = request.requestURI,
+            errorCode = ex.errorCode
+        )
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body)
     }
 
+    @ExceptionHandler(Exception::class)
+    fun handleUnexpected(
+        ex: Exception,
+        request: HttpServletRequest
+    ): ResponseEntity<ApiErrorResponse> {
+        val body = ApiErrorResponse(
+            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            error = HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase,
+            message = "Unexpected error",
+            path = request.requestURI
+        )
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body)
+    }
 }

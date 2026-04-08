@@ -4,11 +4,10 @@ import com.ucamp.api.post.dto.PostCreateRequest
 import com.ucamp.api.post.dto.PostPatchRequest
 import com.ucamp.api.post.dto.PostResponse
 import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
 
 @RestController
 @RequestMapping("/posts")
@@ -21,8 +20,6 @@ class PostController(
         @Valid @RequestBody request: PostCreateRequest,
         authentication: Authentication
     ): ResponseEntity<PostResponse> {
-        //println("authentication.name = ${authentication.name}")
-        //println("authentication.principal = ${authentication.principal}")
         val userId = authentication.name.toLong()
         return ResponseEntity.ok(postService.createPost(request, userId))
     }
@@ -43,13 +40,22 @@ class PostController(
     }
 
     @PatchMapping("/{id}")
-    fun patchPost(@PathVariable id: Long, @RequestBody request: PostPatchRequest) : PostResponse {
-        return postService.patchPost(id, request)
+    fun patchPost(
+        @PathVariable id: Long,
+        @RequestBody request: PostPatchRequest,
+        authentication: Authentication
+    ): PostResponse {
+        val userId = authentication.name.toLong()
+        return postService.patchPost(id, request, userId)
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deletePost(@PathVariable id: Long) {
-        postService.deletePost(id)
+    fun deletePost(
+        @PathVariable id: Long,
+        authentication: Authentication
+    ) {
+        val userId = authentication.name.toLong()
+        postService.deletePost(id, userId)
     }
 }

@@ -41,14 +41,16 @@ class SecurityConfig(
                 auth
                     .requestMatchers("/auth/signup", "/auth/login", "/auth/refresh").permitAll()
 
-                    .requestMatchers(HttpMethod.GET, "/boards", "/boards/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/posts", "/posts/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/boards").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/boards/*").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/boards/*/posts").permitAll()
 
                     .requestMatchers(HttpMethod.POST, "/boards").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/boards/**").authenticated()
                     .requestMatchers(HttpMethod.PATCH, "/boards/**").authenticated()
                     .requestMatchers(HttpMethod.DELETE, "/boards/**").authenticated()
 
+                    .requestMatchers(HttpMethod.GET, "/posts", "/posts/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/posts").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/posts/**").authenticated()
                     .requestMatchers(HttpMethod.PATCH, "/posts/**").authenticated()

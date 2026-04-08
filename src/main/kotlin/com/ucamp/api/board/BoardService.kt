@@ -1,6 +1,5 @@
 package com.ucamp.api.board
 
-
 import com.ucamp.api.board.domain.Board
 import com.ucamp.api.board.dto.BoardCreateRequest
 import com.ucamp.api.board.dto.BoardPatchRequest
@@ -11,10 +10,9 @@ import com.ucamp.api.common.exception.InvalidBoardPatchRequestException
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
-
 
 @Service
+@Transactional(readOnly = true)
 class BoardService(
     private val boardRepository: BoardRepository
 ) {
@@ -25,21 +23,21 @@ class BoardService(
 
     fun getBoard(id: Long): BoardResponse {
         val board = boardRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("Board not found. id =$id") }
+            .orElseThrow { BoardNotFoundException(id) }
 
         return board.toResponse()
     }
 
+    @Transactional
     fun createBoard(request: BoardCreateRequest): BoardResponse {
         if (boardRepository.existsByName(request.name)) {
-            throw IllegalArgumentException("Name already exists : ${request.name}")
+            throw IllegalArgumentException("Board name already exists: ${request.name}")
         }
 
         val saved = boardRepository.save(
             Board(
                 name = request.name,
-                description = request.description,
-                createdAt = LocalDateTime.now(),
+                description = request.description
             )
         )
 
@@ -52,7 +50,6 @@ class BoardService(
             .orElseThrow { BoardNotFoundException(id) }
 
         board.update(request.name, request.description)
-
         return board.toResponse()
     }
 
@@ -78,15 +75,13 @@ class BoardService(
         }
 
         if (request.description != null && request.description.isBlank()) {
-            throw InvalidBoardPatchRequestException("description cannot be blank")
+            throw InvalidBoardPatchRequestException("description must not be blank")
         }
 
         board.patch(request.name, request.description)
         return board.toResponse()
     }
-
 }
-
 
 private fun Board.toResponse(): BoardResponse =
     BoardResponse(
