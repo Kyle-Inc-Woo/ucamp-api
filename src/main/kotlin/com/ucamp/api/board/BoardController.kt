@@ -4,15 +4,18 @@ import com.ucamp.api.board.dto.BoardCreateRequest
 import com.ucamp.api.board.dto.BoardPatchRequest
 import com.ucamp.api.board.dto.BoardResponse
 import com.ucamp.api.board.dto.BoardUpdatedRequest
+import com.ucamp.api.post.PostService
+import com.ucamp.api.post.dto.PostResponse
 import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/boards")
-
 class BoardController(
-    private val boardService: BoardService
+    private val boardService: BoardService,
+    private val postService: PostService
 ) {
     @GetMapping
     fun getBoards(): ResponseEntity<List<BoardResponse>> {
@@ -24,9 +27,15 @@ class BoardController(
         return ResponseEntity.ok(boardService.getBoard(id))
     }
 
+    @GetMapping("/{boardId}/posts")
+    fun getPostsByBoard(@PathVariable boardId: Long): ResponseEntity<List<PostResponse>> {
+        return ResponseEntity.ok(postService.getPostsByBoard(boardId))
+    }
+
     @PostMapping
-    fun createBoard(@Valid @RequestBody request: BoardCreateRequest): ResponseEntity<BoardResponse> {
-        return ResponseEntity.ok(boardService.createBoard(request))
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createBoard(@Valid @RequestBody request: BoardCreateRequest): BoardResponse {
+        return boardService.createBoard(request)
     }
 
     @PutMapping("/{id}")
@@ -38,9 +47,7 @@ class BoardController(
     }
 
     @DeleteMapping("/{id}")
-    fun deleteBoard(
-        @PathVariable id: Long
-    ): ResponseEntity<Void> {
+    fun deleteBoard(@PathVariable id: Long): ResponseEntity<Void> {
         boardService.deleteBoard(id)
         return ResponseEntity.noContent().build()
     }
@@ -52,6 +59,4 @@ class BoardController(
     ): ResponseEntity<BoardResponse> {
         return ResponseEntity.ok(boardService.patchBoard(id, request))
     }
-
-
 }
