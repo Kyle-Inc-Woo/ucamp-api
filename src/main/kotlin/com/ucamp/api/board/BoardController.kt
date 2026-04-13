@@ -9,6 +9,7 @@ import com.ucamp.api.post.dto.PostResponse
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -28,8 +29,12 @@ class BoardController(
     }
 
     @GetMapping("/{boardId}/posts")
-    fun getPostsByBoard(@PathVariable boardId: Long): ResponseEntity<List<PostResponse>> {
-        return ResponseEntity.ok(postService.getPostsByBoard(boardId))
+    fun getPostsByBoard(
+        @PathVariable boardId: Long,
+        authentication: Authentication?
+    ): ResponseEntity<List<PostResponse>> {
+        val userId = authentication?.name?.toLongOrNull()
+        return ResponseEntity.ok(postService.getPostsByBoard(boardId, userId))
     }
 
     @PostMapping

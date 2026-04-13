@@ -56,6 +56,10 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.PATCH, "/posts/**").authenticated()
                     .requestMatchers(HttpMethod.DELETE, "/posts/**").authenticated()
 
+                    .requestMatchers(HttpMethod.GET, "/comments/posts/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/comments").authenticated()
+                    .requestMatchers(HttpMethod.DELETE, "/comments/**").authenticated()
+
                     .anyRequest().authenticated()
             }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)

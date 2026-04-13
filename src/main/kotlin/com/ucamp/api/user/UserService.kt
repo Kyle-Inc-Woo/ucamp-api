@@ -44,11 +44,13 @@ class UserService(
 
     @Transactional
     fun login(request: UserLoginRequest): TokenResponse {
-        val user = userRepository.findByEmail(request.email) ?: throw InvalidCredentialsException()
+        val user = userRepository.findByEmail(request.email)
+            ?: throw InvalidCredentialsException()
 
         val ok = passwordEncoder.matches(request.password, user.passwordHash)
-        if (!ok)
+        if (!ok) {
             throw InvalidCredentialsException()
+        }
 
         val accessToken = jwtTokenProvider.createAccessToken(
             userId = user.id,
@@ -62,33 +64,37 @@ class UserService(
 
         return TokenResponse(
             accessToken = accessToken,
-            refreshToken = refreshToken
+            refreshToken = refreshToken,
+            userId = user.id,
+            nickname = user.nickname
         )
     }
 
     @Transactional(readOnly = true)
     fun refresh(request: RefreshTokenRequest): TokenResponse {
-        if(!jwtTokenProvider.validate(request.refreshToken)) {
+        if (!jwtTokenProvider.validate(request.refreshToken)) {
             throw InvalidCredentialsException()
         }
 
         val userId = jwtTokenProvider.getUserId(request.refreshToken)
 
-        val user = userRepository.findByIdOrNull(userId) ?: throw InvalidCredentialsException()
+        val user = userRepository.findByIdOrNull(userId)
+            ?: throw InvalidCredentialsException()
 
         if (user.refreshToken != request.refreshToken) {
             throw InvalidCredentialsException()
         }
 
-        val newAcessToken = jwtTokenProvider.createAccessToken(
+        val newAccessToken = jwtTokenProvider.createAccessToken(
             userId = userId,
             email = user.email
         )
 
         return TokenResponse(
-            accessToken = newAcessToken,
-            refreshToken = user.refreshToken!!
+            accessToken = newAccessToken,
+            refreshToken = user.refreshToken!!,
+            userId = user.id,
+            nickname = user.nickname
         )
     }
-
 }

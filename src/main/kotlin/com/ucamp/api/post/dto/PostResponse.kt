@@ -6,11 +6,12 @@ data class PostResponse(
     val id: Long?,
     val boardId: Long,
     val boardName: String,
-    val userId : Long,
+    val userId : Long?,
     val nickname: String,
     val title: String,
     val content: String,
     val isAnonymous: Boolean,
+    val isOwner: Boolean,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 )

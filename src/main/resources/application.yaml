@@ -3,9 +3,10 @@ spring:
     name: ucamp-api
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/ucamp
-    username: inchangwoo
-    password:
+    url: jdbc:postgresql://db.pzfdxqklbhnnyciwtdip.supabase.co:5432/postgres
+    username: postgres
+    password: Daehwa310@@
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -14,6 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 
 jwt:

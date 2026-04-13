@@ -16,27 +16,37 @@ class PostController(
 ) {
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     fun createPost(
         @Valid @RequestBody request: PostCreateRequest,
         authentication: Authentication
-    ): ResponseEntity<PostResponse> {
+    ): PostResponse {
         val userId = authentication.name.toLong()
-        return ResponseEntity.ok(postService.createPost(request, userId))
+        return postService.createPost(request, userId)
     }
 
     @GetMapping
-    fun getPosts(): List<PostResponse> {
-        return postService.getPosts()
+    fun getPosts(authentication: Authentication?): List<PostResponse> {
+        val userId = authentication?.name?.toLongOrNull()
+        return postService.getPosts(userId)
     }
 
     @GetMapping("/{id}")
-    fun getPost(@PathVariable id: Long): PostResponse {
-        return postService.getPost(id)
+    fun getPost(
+        @PathVariable id: Long,
+        authentication: Authentication?
+    ): PostResponse {
+        val userId = authentication?.name?.toLongOrNull()
+        return postService.getPost(id, userId)
     }
 
     @GetMapping("/boards/{boardId}")
-    fun getPostsByBoard(@PathVariable boardId: Long): List<PostResponse> {
-        return postService.getPostsByBoard(boardId)
+    fun getPostsByBoard(
+        @PathVariable boardId: Long,
+        authentication: Authentication?
+    ): List<PostResponse> {
+        val userId = authentication?.name?.toLongOrNull()
+        return postService.getPostsByBoard(boardId, userId)
     }
 
     @PatchMapping("/{id}")
