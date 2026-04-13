@@ -1,8 +1,8 @@
 package com.ucamp.api.post.domain
 
 import com.ucamp.api.board.domain.Board
-import com.ucamp.api.user.domain.User
 import com.ucamp.api.post.dto.PostResponse
+import com.ucamp.api.user.domain.User
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -36,7 +36,7 @@ class Post(
     @Column(nullable = false, columnDefinition = "TEXT")
     var content: String,
 
-    @Column(name ="is_anonymous", nullable = false)
+    @Column(name = "is_anonymous", nullable = false)
     var isAnonymous: Boolean = false,
 
     @Column(name = "created_at", nullable = false)
@@ -65,16 +65,20 @@ class Post(
         this.updatedAt = LocalDateTime.now()
     }
 
-    fun toResponse(): PostResponse {
+    fun toResponse(currentUserId: Long? = null): PostResponse {
+        val owner = user.id == currentUserId
+        val masked = isAnonymous && !owner
+
         return PostResponse(
             id = id,
             boardId = board.id!!,
             boardName = board.name,
-            userId = user.id!!,
-            nickname = user.nickname,
+            userId = if (masked) null else user.id,
+            nickname = if (masked) "익명" else user.nickname,
             title = title,
             content = content,
             isAnonymous = isAnonymous,
+            isOwner = owner,
             createdAt = createdAt,
             updatedAt = updatedAt
         )

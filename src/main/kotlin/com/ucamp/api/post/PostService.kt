@@ -39,27 +39,27 @@ class PostService(
         )
 
         val savedPost = postRepository.save(post)
-        return savedPost.toResponse()
+        return savedPost.toResponse(userId)
     }
 
-    fun getPosts(): List<PostResponse> {
+    fun getPosts(currentUserId: Long? = null): List<PostResponse> {
         return postRepository.findAllByOrderByCreatedAtDesc()
-            .map { it.toResponse() }
+            .map { it.toResponse(currentUserId) }
     }
 
-    fun getPost(id: Long): PostResponse {
+    fun getPost(id: Long, currentUserId: Long? = null): PostResponse {
         val post = postRepository.findById(id)
             .orElseThrow { PostNotFoundException(id) }
 
-        return post.toResponse()
+        return post.toResponse(currentUserId)
     }
 
-    fun getPostsByBoard(boardId: Long): List<PostResponse> {
+    fun getPostsByBoard(boardId: Long, currentUserId: Long? = null): List<PostResponse> {
         boardRepository.findById(boardId)
             .orElseThrow { BoardNotFoundException(boardId) }
 
         return postRepository.findAllByBoardIdOrderByCreatedAtDesc(boardId)
-            .map { it.toResponse() }
+            .map { it.toResponse(currentUserId) }
     }
 
     @Transactional
@@ -87,7 +87,7 @@ class PostService(
             isAnonymous = request.isAnonymous
         )
 
-        return post.toResponse()
+        return post.toResponse(userId)
     }
 
     @Transactional
